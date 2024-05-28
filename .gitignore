@@ -1,3 +1,7 @@
+# SRA data
+data/16S
+data/ITS
+
 # History files
 .Rhistory
 .Rapp.history

@@ -1,0 +1,137 @@
+The data is full length 16S and both regions of fungal ITS. It was sequenced on the new PacBio Revio platform using their Kinnex technique. Both libraries were sequenced independently.
+
+ 
+
+This Kinnex technique is pretty interesting, before this method on the Pacbio you could only sequence one amplicon per read. The pacbio platforms deliver reads up to 20K bases, so if you are working with the full length 16S gene – about 1.5K bases there is a lot of wasted capacity. With Kinnex they stick up to 10 amplicons together to use that full capacity. I thought it was pretty cool, if all goes as I think it should this data should be MiSeq levels of throughput, but with full length gene sequences, rather than 300bp Illumina. Hopefully this means we can do a bit more with the data returned (e.g., funguild, functional predictions, better taxonomy etc). I was told this package (https://pages.uoregon.edu/slouca/LoucaLab/archive/FAPROTAX/lib/php/index.php) is a bit better than PiCrust, any experience with it?
+
+ 
+
+Looking at the raw data stats, it looks like it worked very well – for 16S reads each sample has mostly over 200K reads, 1448 or more bp in length, ITS has even more as it is a bit shorter
+
+ 
+
+What you have here are 16 samples from each of 5 plots. All plots are from a palm oil plantation that is undergoing rewilding (for details see: https://alittlewild.com/#rec523988346)
+
+ 
+
+In the attached metadata file you have plots labelled by year and the corresponding chemical properties for each:
+
+ 
+
+P5 is oil palm, still farmed
+
+P4 is an area where all the oil palm trees have been removed – has been like this for 1yr (left fallow)
+
+P3 a managed plot that has been managed/plated for three years (e.g., three years since clearing)
+
+P2 a managed plot that has been managed/plated for two years (e.g., two years since clearing)
+
+P1 a managed plot that has been managed/plated for one years (e.g., one years since clearing)
+
+ 
+
+Using Plot (P3) three as an example, it was palm oil originally, was cleared, and has been managed for three years.
+
+ 
+
+In all plots they follow the same regime:
+
+ 
+
+Palm oil production
+
+Area cleared and left fallow for a year
+
+Then they plant X (will find our exactly what) in year 1
+
+Then Y in year 2
+
+And Z in year 3
+
+ 
+
+All started off as palm oil, then spent a year clear and left alone before planting X, Y then Z
+
+ 
+
+What strikes me as interesting right off the bat is pH and Carbon. pH seems to become less acidic as time goes on, and carbon in the soil increases as time goes on – this is quite a rapid change (I think)
+
+ 
+
+I think we should aim quite high here – global change biology etc and work the land use change angle and carbon sequestration. I have a pretty clear picture of where to take this, but very open to ideas etc.
+
+ 
+
+Hypothesis:
+
+ 
+
+1, Microbial diversity increases with rewilding age and we see corresponding shifts in community structure that influences the chemical properties of the soil. Or something along those lines.
+
+2, Network complexity in bacteria and fungi increases with time
+
+ 
+
+Analysis:
+
+ 
+
+1, Standard Plots of diversity for bacteria and fungi
+
+2, NMDS plots Bacteria and fungi – I would be surprised if they do not cluster by plot.
+
+3, CornCob and all the other methods we use, differential abundance for bacteria and fungi – what is driving
+
+4, Hopefully with these longer read length we can assign some functions to those that are differentially abundant and these functions relate to the measured pH, C, N etc.
+
+5, Heatmaps of top 20 taxa for both, maybe we can resolve to genus or even species now?!!
+
+6, Co-occurrence networks, maybe even a bit of complexity work – I suspect the palm oil is the least complex, whereas the plot that has been managed for three years is the most complex   
+
+7, Keystone species in the networks like in this paper (fig 3, https://doi.org/10.1007/s00248-024-02372-5)
+
+8, Does soil chemical property influence community structure?
+
+9, We might be able to get at community assembly a bit like fig 2 in https://doi.org/10.1007/s00248-024-02372-5, instead of tree species we use plot  
+
+10, anything else you want to try? Any ideas from the restoration work you’ve done in the US etc?
+
+ 
+
+This link shows you where the plots are and has a few pics of each plot - https://www.google.com/maps/d/viewer?mid=1Jje6npngtSd5nsdgyZiSPmr96sGx1B8&ll=1.6815873025227588%2C103.83737993658451&z=20. Malaysia is just one massive palm oil plantation, quite incredible really.
+
+ 
+
+The sequences should be demultiplexed and in folders that correspond to the P1 through P5 descriptions. Both libraries have blanks and the Zymo mock, not sure how useful this is for the fungi, but it does have two yeasts (https://files.zymoresearch.com/datasheets/ds1706_zymobiomics_microbial_community_standards_data_sheet.pdf)
+
+ 
+
+Links to sequences here (valid for 90 days):
+
+ 
+
+https://mynbox.nus.edu.sg/u/7F0v3_RdL4D-XS_G/30a113f9-8d31-4831-8e11-031df8056be8?l
+
+ 
+
+In this link you’ll find a file with 16S and ITS data. In each one of those folders you’ll find a folder that starts with “Data” and in here another folder called “01.CleanData” this is where the demultiplex sequences are. Not sure why they added the “A_” to each of them, but “1_1” is plot1 sample 1 and “3_16” is plot 3 sample 16 and so on. 
+
+ 
+
+Soil chemical properties in the attached excel file – these match up to the sequences.
+
+ 
+
+Hope that all makes some sort of sense? I also appreciate you are currently in Japan and will be jet lagged when you get back, and then you are heading up to Dartmouth – so have look when you can, I have lots to keep me busy!  
+
+ 
+
+Thanks and let me know if you have questions
+
+ 
+
+Ben
+
+ 
+
+ 
