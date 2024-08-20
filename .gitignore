@@ -2,6 +2,12 @@
 data/16S
 data/ITS
 
+# Taxonomy databases
+taxonomy/
+
+# Big files
+output/DADA*
+
 # History files
 .Rhistory
 .Rapp.history
