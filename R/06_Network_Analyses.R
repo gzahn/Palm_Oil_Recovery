@@ -614,6 +614,8 @@ richness_vs_atributes_df %>%
   pivot_longer(contains("_"),names_to = 'network_attribute',values_to = 'value') %>% 
   mutate(value=as.numeric(value),
          Observed=as.numeric(Observed))
+# export re-scaled data
+saveRDS(scaled_richness_vs_atributes_df,"./output/richness_v_scaled_network_attributes_df.RDS")
 
 ## richness ####
 network_mod_fung <- 

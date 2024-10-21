@@ -16,6 +16,11 @@ trt.pal <- c("#300206","#b80006","#d65002","#929412","#1A9850")
 # relative abundance transformation
 ra <- function(x){x/sum(x)}
 
+# pa() ####
+# presence/absence transformation
+pa <- function(x){ifelse(x>0,1,0)}
+
+
 # EE() ####
 # calculate expected errors in a sequence from a vector of quality scores
 EE <- function(qual.scores){
@@ -538,3 +543,15 @@ find_ig_subset_attr <- function(ps.subset,ig.full){
   return(out)
 }
 
+# is_increasing() ####
+# determines whether a numeric vector consistently increases in value along its whole length
+is_increasing <- function(vec) {
+  return(all(diff(vec) > 0))
+}
+
+# is_greater_than_first() ####
+is_greater_than_first <- function(vec){
+  first_element <- vec[1]
+  other_elements <- vec[2:length(vec)]
+  return(all(other_elements > first_element))
+}

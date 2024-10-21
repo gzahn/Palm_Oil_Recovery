@@ -74,7 +74,7 @@ pos_its %>%
   plot_bar2(fill="Species") + scale_fill_viridis_d(option='turbo')
 
 pos_plot1 | pos_plot2
-ggsave("./output/figs/positive_control_barplots.png",width = 8,height = 6)
+ggsave("./output/figs/positive_control_barplots.png",width = 18,height = 16)
 
 # Looks good...
 

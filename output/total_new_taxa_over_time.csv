@@ -1,0 +1,11 @@
+year,taxon,n_new_taxa,resolution
+0,Fungi,95,species
+1,Fungi,35,species
+2,Fungi,38,species
+3,Fungi,18,species
+4,Fungi,7,species
+0,Bacteria,281,species
+1,Bacteria,56,species
+2,Bacteria,91,species
+3,Bacteria,24,species
+4,Bacteria,18,species

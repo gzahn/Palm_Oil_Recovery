@@ -1,0 +1,50 @@
+time,OTU,pH,c_perc_ww,h_perc_ww,n_perc_ww,p_ppm,mean_relabund,Taxonomy,group
+1,ASV_125,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.07687415215601384,Basidiomycota Geminibasidiomycetes Geminibasidiales Geminibasidiaceae Geminibasidium sp.,Fungi
+1,ASV_142,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.055416303400174366,Basidiomycota Agaricomycetes Agaricales Agaricales_fam_incertae_sedis Delicatula cf.integrella,Fungi
+1,ASV_160,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.07529212892761872,Basidiomycota Agaricomycetes Agaricales Entolomataceae Clitopilus sp.,Fungi
+1,ASV_255,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.05055831265508685,Ascomycota Eurotiomycetes Chaetothyriales Trichomeriaceae unclassified sp.,Fungi
+1,ASV_394,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.11701660081439115,Ascomycota Sordariomycetes Pisorisporiales Pisorisporiaceae Candelabrum sp.,Fungi
+1,ASV_41,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.13677786829175534,Ascomycota Dothideomycetes Pleosporales Didymosphaeriaceae sp.,Fungi
+1,ASV_512,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.07268036225951699,Ascomycota Sordariomycetes Microascales Microascaceae Petriella sp.,Fungi
+2,ASV_234,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.20778140251695676,Chytridiomycota Rhizophydiomycetes Rhizophydiales Terramycetaceae Terramyces sp.,Fungi
+2,ASV_329,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.053447933786697176,Ascomycota Sordariomycetes Xylariales Microdochiaceae Microdochium bolleyi,Fungi
+2,ASV_373,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.07492933839316016,Ascomycota Sordariomycetes Myrmecridiales Myrmecridiaceae Myrmecridium sp.,Fungi
+2,ASV_505,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.06013057243923265,Ascomycota Sordariomycetes Glomerellales Plectosphaerellaceae Furcasterigmium sp.,Fungi
+2,ASV_509,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.11434436258424983,Ascomycota Sordariomycetes Glomerellales Plectosphaerellaceae sp.,Fungi
+2,ASV_546,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.05114602269065407,Ascomycota Sordariomycetes Hypocreales Bionectriaceae Acremonium sp.,Fungi
+2,ASV_549,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.07211330243465887,Ascomycota Sordariomycetes Hypocreales Stachybotryaceae Striatibotrys sp.,Fungi
+2,ASV_620,5.5007142857142854,1.9714285714285715,1.3214285714285714,0.295,278.2142857142857,0.1591091431363075,Ascomycota Sordariomycetes Hypocreales Nectriaceae Bisifusarium dimerum,Fungi
+3,ASV_135,5.54,2.4254545454545453,1.4781818181818183,0.3281818181818182,513.3636363636364,0.07003891469411812,Basidiomycota Agaricomycetes Cantharellales Ceratobasidiaceae Rhizoctonia sp.,Fungi
+3,ASV_144,5.54,2.4254545454545453,1.4781818181818183,0.3281818181818182,513.3636363636364,0.07671822531819733,Basidiomycota Agaricomycetes Agaricales Psathyrellaceae Parasola sp.,Fungi
+3,ASV_36,5.54,2.4254545454545453,1.4781818181818183,0.3281818181818182,513.3636363636364,0.05883097235380355,Ascomycota Dothideomycetes Pleosporales Didymosphaeriaceae unclassified sp.,Fungi
+3,ASV_395,5.54,2.4254545454545453,1.4781818181818183,0.3281818181818182,513.3636363636364,0.07835299918510215,Ascomycota Sordariomycetes Sordariales Sordariaceae sp.,Fungi
+3,ASV_476,5.54,2.4254545454545453,1.4781818181818183,0.3281818181818182,513.3636363636364,0.17010592814313358,Ascomycota Sordariomycetes Sordariales Schizotheciaceae Lundqvistomyces sp.,Fungi
+3,ASV_5,5.54,2.4254545454545453,1.4781818181818183,0.3281818181818182,513.3636363636364,0.1657754010695187,Basidiomycota Agaricomycetes Cantharellales Tulasnellaceae Tulasnella calospora,Fungi
+3,ASV_614,5.54,2.4254545454545453,1.4781818181818183,0.3281818181818182,513.3636363636364,0.12025252135883545,Ascomycota Sordariomycetes Hypocreales Bionectriaceae sp.,Fungi
+4,ASV_151,5.696,2.731,1.308,0.354,474.4,0.21420940170940173,Basidiomycota Agaricomycetes Agaricales Psathyrellaceae Coprinellus sp.,Fungi
+4,ASV_168,5.696,2.731,1.308,0.354,474.4,0.1,Basidiomycota Agaricomycetes Agaricales Agaricaceae Lycoperdon pratense,Fungi
+4,ASV_192,5.696,2.731,1.308,0.354,474.4,0.20669856459330144,Ascomycota Saccharomycetes Saccharomycetales Saccharomycetales_fam_incertae_sedis Candida tropicalis,Fungi
+4,ASV_196,5.696,2.731,1.308,0.354,474.4,0.2,Chytridiomycota Cladochytriomycetes Cladochytriales Septochytriaceae unclassified sp.,Fungi
+4,ASV_44,5.696,2.731,1.308,0.354,474.4,0.08579059829059829,Ascomycota Dothideomycetes Pleosporales Didymellaceae Epicoccum sp.,Fungi
+4,ASV_511,5.696,2.731,1.308,0.354,474.4,0.12284688995215311,Ascomycota Sordariomycetes Microascales Microascaceae Lophotrichus fimeti,Fungi
+4,ASV_607,5.696,2.731,1.308,0.354,474.4,0.07045454545454545,Ascomycota Sordariomycetes Hypocreales Hypocreales_fam_incertae_sedis Sesquicillium sp.,Fungi
+1,ASV_4770,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.051268175423145115,Bacteroidota Bacteroidia Cytophagales Hymenobacteraceae Adhaeribacter sp.,Bacteria
+1,ASV_4932,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.18190911613469554,Bacteroidota Bacteroidia Chitinophagales Chitinophagaceae Dinghuibacter silviterrae,Bacteria
+1,ASV_5603,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.054504103195605065,Methylomirabilota Methylomirabilia Rokubacteriales WX65 sp.,Bacteria
+1,ASV_9036,5.0668750000000005,1.741875,1.44625,0.278125,299.3125,0.07549778099168729,Proteobacteria Gammaproteobacteria Burkholderiales Burkholderiaceae Ralstonia solanacearum,Bacteria
+2,ASV_2180,5.5075,1.9675,1.308125,0.296875,314.8125,0.0979818727474939,Verrucomicrobiota Omnitrophia Omnitrophales Omnitrophaceae Candidatus Omnitrophus sp.,Bacteria
+2,ASV_4656,5.5075,1.9675,1.308125,0.296875,314.8125,0.09585599522917011,Patescibacteria Saccharimonadia Saccharimonadales YM_S32_TM7_50_20 sp.,Bacteria
+2,ASV_5762,5.5075,1.9675,1.308125,0.296875,314.8125,0.13231832295552404,Actinobacteriota Thermoleophilia Solirubrobacterales Solirubrobacteraceae Solirubrobacter sp.,Bacteria
+2,ASV_9505,5.5075,1.9675,1.308125,0.296875,314.8125,0.05214037413277806,Proteobacteria Gammaproteobacteria Burkholderiales Rhodocyclaceae Azospira sp.,Bacteria
+3,ASV_2872,5.538125,2.278125,1.45625,0.32437499999999997,481.6875,0.06471893182619298,Verrucomicrobiota Verrucomicrobiae Verrucomicrobiales Rubritaleaceae Luteolibacter sp.,Bacteria
+3,ASV_2958,5.538125,2.278125,1.45625,0.32437499999999997,481.6875,0.26096351712542987,Verrucomicrobiota Verrucomicrobiae Chthoniobacterales Terrimicrobiaceae FukuN18 freshwater group sp.,Bacteria
+3,ASV_4694,5.538125,2.278125,1.45625,0.32437499999999997,481.6875,0.10461233856374683,Fibrobacterota Fibrobacteria Fibrobacterales Fibrobacteraceae possible genus 04 sp.,Bacteria
+3,ASV_5588,5.538125,2.278125,1.45625,0.32437499999999997,481.6875,0.12693316102529992,Desulfobacterota Syntrophorhabdia Syntrophorhabdales Syntrophorhabdaceae Syntrophorhabdus sp.,Bacteria
+3,ASV_6540,5.538125,2.278125,1.45625,0.32437499999999997,481.6875,0.11216087354868826,Firmicutes Bacilli Lactobacillales Streptococcaceae Lactovum sp.,Bacteria
+3,ASV_6569,5.538125,2.278125,1.45625,0.32437499999999997,481.6875,0.1049411418268713,Firmicutes Bacilli Bacillales Bacillaceae Bacillus circulans,Bacteria
+4,ASV_4957,5.68375,2.510625,1.363125,0.34500000000000003,512.125,0.16310191309465258,Bacteroidota Bacteroidia Chitinophagales Chitinophagaceae Chitinophaga sp.,Bacteria
+4,ASV_5873,5.68375,2.510625,1.363125,0.34500000000000003,512.125,0.22890241449153542,Actinobacteriota Actinobacteria Streptosporangiales Thermomonosporaceae Thermobispora bispora,Bacteria
+4,ASV_6482,5.68375,2.510625,1.363125,0.34500000000000003,512.125,0.08430530101532387,Firmicutes Clostridia Clostridiales Clostridiaceae Clostridium sensu stricto 1 saccharoperbutylacetonicum,Bacteria
+4,ASV_6539,5.68375,2.510625,1.363125,0.34500000000000003,512.125,0.08589181286549707,Firmicutes Bacilli Lactobacillales Streptococcaceae Lactococcus lactis,Bacteria
+4,ASV_7528,5.68375,2.510625,1.363125,0.34500000000000003,512.125,0.05207285942552479,Acidobacteriota Holophagae Holophagales Holophagaceae Geothrix fermentans,Bacteria
+4,ASV_9028,5.68375,2.510625,1.363125,0.34500000000000003,512.125,0.07015048884011424,Proteobacteria Gammaproteobacteria Burkholderiales Alcaligenaceae sp.,Bacteria
