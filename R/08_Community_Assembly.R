@@ -59,6 +59,15 @@ bact@sam_data$time <-
   str_replace("o",'0') %>% 
   as.numeric()
 
+# View tree
+bact_order.glom <- 
+  bact %>% 
+  tax_glom("Order")
+
+plot_tree(bact_order.glom, color="Phylum")
+# need a tree of ALL bacterial orders:
+# highlight the diversity (at order level) present at each year, from left to right
+
 # agglomerate taxa at species level (not ASV level for this analysis)
 fung <- 
   fung %>% 
@@ -301,7 +310,8 @@ bact_ts_melt %>%
   mutate(Taxonomy=factor(Taxonomy,levels=Taxonomy))
 
 fung_new_arrivals %>% 
-  mutate(group="Fungi") %>% 
+  mutate(group="Fungi",
+         time=as.numeric(time)) %>% 
   full_join(
     bact_new_arrivals %>% 
       mutate(group="Bacteria")
@@ -334,3 +344,120 @@ bact_new_arrivals %>%
 p1 / p2
 ggsave("./output/figs/Newly_arriving_taxa_over_time_bact_and_fung.png",height = 12, width = 16,dpi=400)
 
+
+# Export data for Carl ####
+
+# reload raw data
+fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
+bact <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS")
+
+# agglomerate taxa at order level, merge by treatment year, and find relabund
+ord_bact <- 
+  bact %>% 
+  tax_glom("Order",NArm = FALSE) %>% 
+  merge_samples("treatment") %>% 
+  transform_sample_counts(ra)
+
+ord_fung <- 
+  fung %>% 
+  tax_glom("Order",NArm = FALSE) %>% 
+  merge_samples("treatment") %>% 
+  transform_sample_counts(ra)
+
+
+
+# melt objects to data frames
+ord_bact_df <- 
+  ord_bact %>% 
+  psmelt() %>% 
+  mutate(time = Sample %>% 
+           as.character() %>% 
+           str_sub(1,1) %>% 
+           str_replace("3",'4') %>% 
+           str_replace("2",'3') %>% 
+           str_replace("1",'2') %>% 
+           str_replace("0",'1') %>% 
+           str_replace("o",'0') %>% 
+           as.numeric())
+ord_fung_df <- 
+  ord_fung %>% 
+  psmelt() %>% 
+  mutate(time = Sample %>% 
+           as.character() %>% 
+           str_sub(1,1) %>% 
+           str_replace("3",'4') %>% 
+           str_replace("2",'3') %>% 
+           str_replace("1",'2') %>% 
+           str_replace("0",'1') %>% 
+           str_replace("o",'0') %>% 
+           as.numeric())
+
+# remove rows where relabund == 0
+# need to find number of unique otus for each subset (time,order)
+b_melt <- 
+  bact %>% 
+  psmelt()
+f_melt <- 
+  fung %>% 
+  psmelt()
+
+bact_otu_counts <- 
+  b_melt %>% 
+  mutate(time = treatment %>% 
+           as.character() %>% 
+           str_sub(1,1) %>% 
+           str_replace("3",'4') %>% 
+           str_replace("2",'3') %>% 
+           str_replace("1",'2') %>% 
+           str_replace("0",'1') %>% 
+           str_replace("o",'0') %>% 
+           as.numeric()) %>% 
+  dplyr::filter(Abundance > 0) %>% 
+  group_by(Order,time) %>% 
+  summarize(N_ASVs = n())
+
+fung_otu_counts <- 
+  f_melt %>% 
+  mutate(time = treatment %>% 
+           as.character() %>% 
+           str_sub(1,1) %>% 
+           str_replace("3",'4') %>% 
+           str_replace("2",'3') %>% 
+           str_replace("1",'2') %>% 
+           str_replace("0",'1') %>% 
+           str_replace("o",'0') %>% 
+           as.numeric()) %>% 
+  dplyr::filter(Abundance > 0) %>% 
+  group_by(Order,time) %>% 
+  summarize(N_ASVs = n())
+
+ord_bact_df %>% 
+  dplyr::rename("ASV" = "OTU",
+                "relative_abundance" = "Abundance") %>% 
+  dplyr::select(Kingdom,Phylum,Class,Order,time,relative_abundance,ASV) %>% 
+  dplyr::filter(!is.na(Order) & relative_abundance > 0 & Order != "unclassified") %>% 
+  dplyr::arrange(Order,time) %>%
+  left_join(bact_otu_counts) %>% 
+  write_csv("./output/Bacterial_order_presence_over_time.csv")
+
+
+ord_fung_df %>% 
+  dplyr::rename("ASV" = "OTU",
+                "relative_abundance" = "Abundance") %>% 
+  dplyr::select(Kingdom,Phylum,Class,Order,time,relative_abundance,ASV) %>% 
+  dplyr::filter(!is.na(Order) & relative_abundance > 0 & Order != "unclassified") %>%
+  dplyr::arrange(Order,time) %>% 
+  left_join(fung_otu_counts) %>% 
+  write_csv("./output/Fungal_order_presence_over_time.csv")
+
+x <- ord_fung_df %>% 
+  dplyr::rename("ASV" = "OTU",
+                "relative_abundance" = "Abundance") %>% 
+  dplyr::select(Kingdom,Phylum,Class,Order,time,relative_abundance,ASV) %>% 
+  dplyr::filter(!is.na(Order) & relative_abundance > 0 & Order != "unclassified") %>%
+  dplyr::arrange(Order,time) %>% 
+  left_join(fung_otu_counts)
+
+x %>% 
+  group_by(time) %>% 
+  summarize(total_abund = sum(relative_abundance))

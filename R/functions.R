@@ -555,3 +555,144 @@ is_greater_than_first <- function(vec){
   other_elements <- vec[2:length(vec)]
   return(all(other_elements > first_element))
 }
+
+
+# get_bacdive_morphology() ####
+# bacdive helper function
+get_bacdive_morphology <- function(genus){
+  x <- BacDive::request(object = bacdive,
+                        query = genus,
+                        search = "taxon")
+  # find bacdive id
+  y <- x$results
+  
+  if(length(y) == 0){
+    df <- data.frame(genus=genus,
+                     length=NA,
+                     width=NA,
+                     shape=NA)
+    return(df)
+  }
+  
+  # get info on that id
+  z <- BacDive::fetch(bacdive,y)
+  
+  # get morphology
+  m <- z$results %>% 
+    map("Morphology")
+  
+  m <- m %>% map("cell morphology")
+  # subset to non-null entries
+  m <- m[c(which(m %>% map(notnull) %>% unlist) %>% names)]
+  
+  # test to see if morphology present
+  # if morphology of type strain is empty, check taxonomic synonyms
+  if(length(m) == 0){
+    
+    # find synonyms
+    taxonomy <- z$results %>% 
+      map("Name and taxonomic classification")
+    syn <- taxonomy %>% 
+      map("LPSN") %>% 
+      map("synonyms") %>% 
+      map("synonym") %>% 
+      unlist() %>% 
+      unique()
+    
+    # if not synonyms, return NAs
+    if(is.null(syn)){
+      df <- data.frame(genus=genus,
+                       length=NA,
+                       width=NA,
+                       shape=NA)
+      return(df)
+    } else {
+      # re-run bacdive request with synonyms
+      x <- BacDive::request(object = bacdive,
+                            query = syn,
+                            search = "taxon")  
+      
+      if(length(x$results) == 0){
+        df <- data.frame(genus=genus,
+                         length=NA,
+                         width=NA,
+                         shape=NA)
+        return(df)
+      } else {
+        z <- BacDive::fetch(bacdive,x$results)
+      }
+      
+    }
+  }
+  
+  # get morphology again (perhaps using synonyms)
+  m <- z$results %>% 
+    map("Morphology")
+  m <- m %>% map("cell morphology")
+  # subset to non-null entries
+  m <- m[c(which(m %>% map(notnull) %>% unlist) %>% names)]
+  
+  # test to see if morphology present
+  # if morphology still not present, export NAs
+  
+  if(length(m) == 0){
+    df <- data.frame(genus=genus,
+                     length=NA,
+                     width=NA,
+                     shape=NA)
+    return(df)
+  } else {
+    # get morphology
+    m <- z$results %>% 
+      map("Morphology")
+    m <- m %>% map("cell morphology")
+    # subset to non-null entries
+    m <- m[c(which(m %>% map(notnull) %>% unlist) %>% names)]
+    
+    # cell length
+    length <- m %>% 
+      map("cell length")
+    if(which(length %>% map(notnull) %>% unlist()) %>% length() ==0){
+      length <- NA
+    } else {
+      length <- length[which(length %>% map(notnull) %>% unlist())] %>% 
+        unlist()
+    }
+    
+    # cell width
+    width <- m %>% 
+      map("cell width")
+    if(which(width %>% map(notnull) %>% unlist()) %>% length() ==0){
+      width <- NA
+    } else {
+      width <- width[which(width %>% map(notnull) %>% unlist())] %>% 
+        unlist()
+    }
+    
+    # cell shape
+    shape <- m %>% 
+      map("cell shape")
+    if(which(shape %>% map(notnull) %>% unlist()) %>% length() ==0){
+      shape <- NA
+    } else{
+      shape <- shape[which(shape %>% map(notnull) %>% unlist())] %>% 
+        unlist()
+    }
+    
+    l <- length(length)
+    w <- length(width)
+    s <- length(shape)
+    max_rows <- min(c(l,w,s))
+    
+    length <- length[1:max_rows]
+    width <- width[1:max_rows]
+    shape <- shape[1:max_rows]
+    
+    df <- data.frame(genus=genus,
+                     length=length,
+                     width=width,
+                     shape=shape)
+    return(df)
+  }
+  
+}
