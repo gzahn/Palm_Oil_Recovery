@@ -195,10 +195,9 @@ knitr::include_graphics("./output/figs/Newly_arriving_taxa_over_time_bact_and_fu
 
 Collaborator Carl Hjelmen put these together. He's a phylogeny guy.
 
-Anyway, Here are 2 versions - One showing the number of unique ASVs, the other showing the relative abundance values. I like these, and I think we could have both versions of the heatmaps plotted next to the trees. We will do this for bacteria also of course. But wanted your feedback...
+One heatmap showing the number of unique ASVs, the other showing the relative abundance values. I like these, and we will do this for bacteria also of course. But wanted your feedback...
 
 ```{r}
-knitr::include_graphics("./output/figs/N_ASVs_Heatmap.png")
-knitr::include_graphics("./output/figs/Relative_abund.png")
+knitr::include_graphics("./output/figs/Order-Level_Phylogeny_Heatmap.png")
 ```
 
