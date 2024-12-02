@@ -131,7 +131,7 @@ knitr::include_graphics("./output/figs/important_fungal_taxa.png")
 
 Bacteria
 ```{r fig.height=12, fig.width=18}
-knitr::include_graphics("./output/figs/important_fungal_taxa.png")
+knitr::include_graphics("./output/figs/important_bacterial_taxa.png")
 ```
 
 
