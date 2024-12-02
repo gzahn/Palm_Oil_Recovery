@@ -556,6 +556,9 @@ is_greater_than_first <- function(vec){
   return(all(other_elements > first_element))
 }
 
+# notnull() ####
+# returns non-NULL items as logical
+notnull <- function(x){!is.null(x)}
 
 # get_bacdive_morphology() ####
 # bacdive helper function

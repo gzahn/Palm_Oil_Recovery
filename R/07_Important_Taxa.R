@@ -167,6 +167,9 @@ bact_sig_melt <-
   psmelt() %>% 
   mutate(taxonomy=paste(Phylum,Order,Family,Genus,Species,sep=" ") %>% str_remove_all("NA "))
 
+saveRDS(fung_sig_melt,"./output/fungi_significant_taxa.RDS")
+saveRDS(bact_sig_melt,"./output/bacteria_significant_taxa.RDS")
+
 
 # PLOTS ####
 bacteria_top_taxa

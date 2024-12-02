@@ -8,6 +8,8 @@ library(phyloseq); packageVersion("phyloseq")
 library(patchwork); packageVersion("patchwork")
 library(BacDive); packageVersion("BacDive")
 library(fungaltraits); packageVersion("fungaltraits")
+library(FUNGuildR); packageVersion("FUNGuildR")
+library(lemon); packageVersion("lemon")
 
 ## functions ####
 source("./R/functions.R")
@@ -26,10 +28,15 @@ set.seed(666)
 
 # LOAD DATA ####
 # Load cleaned phyloseq object
-ps <- readRDS("./output/clean_phyloseq_object.RDS")
+bact <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS")
+fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
 
 # load list of significant taxa
-# sig_taxa <- readRDS("./output/final_significant_taxa.RDS")
+hub.taxa <- read_csv("./output/hub_taxa_list.csv")
+new.arrivals <- read_csv("./output/new_arrival_taxa_over_time.csv")
+fung.sig.taxa <- readRDS("./output/fungi_significant_taxa.RDS")
+bact.sig.taxa <- readRDS("./output/bacteria_significant_taxa.RDS")                    
+
 
                     ############################################################
                     # Stuff below was for a different project...needs adapting #
@@ -37,54 +44,68 @@ ps <- readRDS("./output/clean_phyloseq_object.RDS")
 
 # Fungal Traits ####
 
-# download traits metadata
-traits_meta <- read_csv("https://github.com/traitecoevo/fungaltraits/releases/download/v0.0.3/funtothefun.csv")
+## FunGuild ##
+guild_db <- FUNGuildR::get_funguild_db()
 
-# download FungalTraits database
-traits_db <- fungaltraits::fungal_traits()
-names(traits_db$species)
-# match taxa at genus level
-genera <- fung@tax_table[,6] %>% str_remove("^g__")
-species <- fung@tax_table[,7] %>% str_remove("^s__")
-fungal_traits <- 
-  data.frame(Genus=genera) %>% 
-  mutate(species=paste(Genus,species,sep="_")) %>% 
-  left_join(traits_db,by=c("species","Genus"),multiple='all')
+# save guild db as RDS
+saveRDS(guild_db, "./taxonomy/Funguild_Database.RDS")
 
-# need to condense/remove multiple matches
-fungal_traits %>% 
-  dplyr::filter(species != "NA_NA")
+# assign guild to fungal ASV taxonomy
+guilds <- 
+  data.frame(
+    Taxonomy = paste(
+      tax_table(fung)[,1],
+      tax_table(fung)[,2],
+      tax_table(fung)[,3],
+      tax_table(fung)[,4],
+      tax_table(fung)[,5],
+      tax_table(fung)[,6],
+      tax_table(fung)[,7],
+      sep=";"
+    )
+  ) %>% 
+  FUNGuildR::funguild_assign()
 
-# remove traits not associated with biochem functional potential
-traits_to_ignore <- c(
-  "redChannel_mean","redChannel_sd","RNAHelicase_count","RNApolymerase_count","spore_length",
-  "spore_size","spore_width","sporocarp_chitin","sporocarp_N","sporocarp_protein","sporocarp_resp",           
-  "taxonomic_level_fg","tissue_c","tissue_cn","tissue_cp","tissue_n","tissue_np","tissue_p","total_genes",
-  "trehalase_count","latitude","map","greenChannel_mean","greenChannel_sd","heatShockProtein_count",
-  "extension_rate","fruiting_body_size","mat","longitude","melanin_content","melanin_count",
-  "coldShockProtein_count","dsDNA","blueChannel_mean","blueChannel_sd","ifungorum_number",
-  "sterol_type","studyName","substrate","trait_fg","trophic_mode_fg",'notes_fg',"source_funguild_fg",
-  "growth_form_fg","guild_fg","higher_clade","culture_media","culture_notes","elevation","em_expl",
-  "em_text","colour_mean","confidence_fg","ascoma_development","ascoma_type","ascus_dehiscence",
-  "uuid","obj_id","speciesMatched"
-)
+guilds
+# add guild info and rename ASVs to match
+fung@tax_table[,1] <- guilds$guild
+taxa_names(fung) <- paste0("ASV_",seq_along(taxa_names(fung)))
+taxa_names(bact) <- paste0("ASV_",seq_along(taxa_names(bact)))
 
-# group by species; summarize to find mean values with na.omit=TRUE
-summarized_traits <- 
-  fungal_traits %>% 
-  dplyr::select(-all_of(traits_to_ignore)) %>% 
-  dplyr::group_by(species) %>% 
-  summarize(across(where(is.numeric),function(x){mean(x,na.rm=TRUE)}))
 
-names(summarized_traits)
+fung.sig.melt <- 
+  fung %>% 
+  transform_sample_counts(ra) %>% 
+  subset_taxa(taxa_names(fung) %in% fung.sig.taxa$OTU) %>% 
+  psmelt()
+fung.sig.melt <- 
+  fung.sig.melt %>%
+  mutate(Guild = case_when(grepl("Plant Pathogen",Kingdom) ~ "Plant Pathogen",
+                           grepl("Fungal Parasite",Kingdom) ~ "Fungal Parasite",
+                           grepl("Animal Pathogen",Kingdom) ~ "Animal Pathogen",
+                           grepl("Saprotroph",Kingdom) ~ "Saprotroph"))
+  
+# remake important fungi plots
+p <- 
+fung.sig.melt %>% 
+  dplyr::filter(!is.na(Genus) & Genus != "unclassified" & !is.na(Guild)) %>% 
+  # dplyr::filter(treatment != "oil palm") %>% 
+  ggplot(aes(x=treatment,y=Abundance,fill=Guild)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(face='bold',size=12,angle=90,hjust=1,vjust=.5),
+        strip.background = element_rect(fill='white'),
+        strip.text = element_text(size=12,face='bold.italic'),
+        panel.spacing = unit(1,"lines"),
+        strip.placement = 'outside'
+       ) +
+  scale_fill_viridis_d(option="turbo") +
+  labs(x="Time since restoration",y="Relative abundance") +
+  facet_wrap(~Genus,scales = 'free_y',axis.labels = 'margins')
+  
+p  
 
-# join traits with tax_table species 
-
-traits <- 
-  data.frame(Genus=genera) %>% 
-  mutate(species=paste(Genus,species,sep="_")) %>% 
-  left_join(summarized_traits,by=c("species"))
-
+ggsave("./output/figs/important_fungal_taxa_guilds.png",height = 16, width = 16, dpi=400)
+# these fungi increased since oil palm, at least in one year
 
 
 
@@ -94,127 +115,105 @@ traits <-
 bacdive <- BacDive::open_bacdive(username = Sys.getenv("BACDIVE_USER"),
                                  password = Sys.getenv("BACDIVE_PW"))
 
+bact.sig.melt <- 
+  bact %>% 
+  transform_sample_counts(ra) %>% 
+  subset_taxa(taxa_names(bact) %in% bact.sig.taxa$OTU) %>% 
+  psmelt()
 
 
-# get list of unique genera
-genus_list <- ps@tax_table[,6] %>% 
-  table()
-genus_list <- genus_list %>% 
-  as.data.frame() %>% 
-  pluck(".") %>% 
-  levels() 
+p <- 
+  bact.sig.melt %>% 
+  dplyr::filter(!is.na(Genus) & Genus != "unclassified" ) %>% 
+  # dplyr::filter(treatment != "oil palm") %>% 
+  ggplot(aes(x=treatment,y=Abundance,fill=Phylum)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(face='bold',size=12,angle=90,hjust=1,vjust=.5),
+        strip.background = element_rect(fill='white'),
+        strip.text = element_text(size=12,face='bold.italic'),
+        panel.spacing = unit(1,"lines"),
+        strip.placement = 'outside'
+  ) +
+  scale_fill_viridis_d(option="turbo") +
+  labs(x="Time since restoration",y="Relative abundance") +
+  facet_wrap(~Genus,scales = 'free_y',axis.labels = 'margins')
 
-# BacDive API ####
+p  
 
-# build large list of BacDive cell morphology
-morph_list <- list()
+ggsave("./output/figs/important_bacterial_taxa_guilds.png",height = 16, width = 16, dpi=400)
+# get list of unique genera to look up in literature
+genus_list <- bact.sig.melt$Genus %>% str_remove("Candidatus ") %>% unique
+genus_list <- genus_list[!is.na(genus_list)]
+writeLines(genus_list,"./output/significant_bacterial_genera.txt")
+genus_list
 
-for(i in genus_list){
-  df <- get_bacdive_morphology(i)
-  morph_list[[i]] <- df
-}  
-saveRDS(morph_list,"./output/genus_morphology_data.RDS")
-morph_list <- readRDS("./output/genus_morphology_data.RDS")
+# Udaeobacter is one of the most cosmopolitan soil fungi. Genetic streamlining.
+# Halangium produce the antifungal compounds haliangicins.
+# Occallatibacter acidobacteria isolated from Namibian soils
+# Bacillus strains here are bacillus living in salty or alkaline conditions, or salty and alkaline conditions
+#   "megaterium" can solubilize phosphate
+# ADurb.Bin063-1 has been noted for Annamox ability
+# Koribacter CO-oxidizing, potential large role in CO removal from atmosphere
+# Reyranella ???
+# Aquisphaera optimum growth temperature of about 30-35 °C and an optimum pH for growth of around 7.5-8.5
+# 
 
-names(morph_list)
-# morph_list <- readRDS("./output/genus_morphology_data.RDS")
+x <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS")
+# x[,7] %>% unique %>% unname
+plot_P_taxa <- 
+function(m,g,s){
+  t <- try(m %>% subset_taxa(Genus==g & Species==s) %>% ntaxa)
+  if("try-error" %in% class(t)){stop("Taxon not in data set.")} 
+  
+  if("try-error" %ni% class(t)) {
+    melt <- psmelt(m %>% transform_sample_counts(ra))
+    x <- 
+      melt %>% 
+      dplyr::filter(!is.na(Genus) & Genus != "unclassified") %>%
+      dplyr::filter(Genus == g & Species == s) 
+    
+    x$SciName <- paste(x$Genus,x$Species)  
+    x %>% 
+      ggplot(aes(x=treatment,y=Abundance)) +
+      geom_boxplot() +
+      theme(axis.text.x = element_text(face='bold',size=12,angle=90,hjust=1,vjust=.5),
+            strip.background = element_rect(fill='white'),
+            strip.text = element_text(size=12,face='bold.italic'),
+            panel.spacing = unit(1,"lines"),
+            strip.placement = 'outside'
+      ) +
+      scale_fill_viridis_d(option="turbo") +
+      labs(x="Time since restoration",y="Relative abundance") +
+      facet_wrap(~SciName,scales = 'free_y',axis.labels = 'margins')
+    ggsave(paste0("./output/figs/Sig_Taxa_P_solubilizers_",g,"_",s,".png"),height = 6,width = 6,dpi=300)
+    
+  }
+  
+}
 
-# reduce to single data frame
-morphology <- purrr::reduce(morph_list,full_join)
+# m=bact;g="Bacillus";s="circulans"
+plot_P_taxa(bact,"Bacillus","circulans")
+plot_P_taxa(bact,"Bacillus","megaterium")
+plot_P_taxa(bact,"Bacillus","megaterium")
 
-# ANALYSIS OF BACDIVE DATA ####
-# minimum dimensions
-morphology$min_length <- morphology$length %>% 
-  str_remove(" µm") %>% 
-  str_split("-") %>% 
-  map_chr(1) %>% 
-  as.numeric()
-
-morphology$min_width <- morphology$width %>% 
-  str_remove(" µm") %>% 
-  str_split("-") %>% 
-  map_chr(1) %>% 
-  as.numeric()
-
-
-# add signifigance column
-morphology <- morphology %>% 
-  mutate(signifigant_taxa = case_when(genus %in% sig_taxa ~ TRUE,
-                                      TRUE ~ FALSE),
-         min_dimension = ifelse((min_length - min_width) > 0, 
-                                min_width,
-                                min_length),
-         est_vol = min_length * min_width,
-         shape = shape %>% str_remove("-shaped"),
-         est_surface_area = case_when(shape == "coccus" ~ 4*pi*((min_dimension/2)^2),
-                                      shape != "coccus" ~ (2*pi*((min_length/2)^2))))
-
-saveRDS(morphology,"./output/cell_morphology_data.RDS")
-ps@sam_data
-morphology %>% 
-  dplyr::filter(signifigant_taxa) %>% 
-  group_by(genus) %>% 
-  summarize(Avg_Min = mean(min_length,na.rm=TRUE))
-write_csv("./output/significant_taxa_traits.csv")
-
-
-morphology %>% 
-  dplyr::filter(signifigant_taxa) %>% 
-  mutate(length=length %>% str_remove(" µm") %>% str_split("-") %>% map_chr(1) %>% as.numeric,
-         width=width %>% str_remove(" µm") %>% str_split("-") %>% map_chr(1) %>% as.numeric) %>% 
-  group_by(genus) %>% 
-  summarize(mean_length=mean(length,na.rm=TRUE),
-            mean_width=mean(width,na.rm=TRUE))
-
-# distribution plots
-morphology %>% 
-  ggplot(aes(x=min_dimension, fill = signifigant_taxa)) +
-  geom_density(alpha=.5) +
-  labs(x="Minimum dimension (µm)",
-       fill="Significant\ntaxa")
-ggsave("./output/figs/minimum_cell_dimension_distribution.png",
-       dpi=300,height = 6, width = 6)
-
-# GLM model output for minimum cell dimension
-# minimum dimension is important for Reynold's Number
-mod <- glm(data=morphology,
-           formula = min_dimension ~ signifigant_taxa)
-saveRDS(mod,"./output/cell_dimension_glm.RDS")
-sink("./output/cell_min_dimension_glm_summary.txt")
-mod %>% summary()
-sink(NULL)
-report::report(mod)
-morphology
-# Chi-Square test for enrichment in cell shape for significant taxa
-
-xsqtest <- table(morphology$shape, morphology$signifigant_taxa) %>% 
-  chisq.test()
-saveRDS(xsqtest,"./output/cell_shape_xsq.RDS")
-
-sink("./output/cell_shape_chi-sq_test.txt")
-print("Genus significance and shape")
-table(morphology$shape, morphology$signifigant_taxa)
-print("")
-table(morphology$shape, morphology$signifigant_taxa) %>% 
-  chisq.test()
-print("No apparent enrichment in cell shape morphology in significant taxa")
-sink(NULL)
-
-morphology$est_surface_area
-table(morphology$shape)
+# do with fungi as well
+f <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
+plot_P_taxa(f,"Aspergillus","fumigatus")
+plot_P_taxa(f,"Trichoderma","viride")
 
 
-# surface area 
-morphology %>% 
-  ggplot(aes(x=est_surface_area,fill=signifigant_taxa)) +
-  geom_density()
+bm <- bact %>% 
+  transform_sample_counts(ra) %>%
+  subset_taxa(Genus == "Bacillus" & Species == "megaterium") %>% 
+  psmelt()
 
-mod_surfacearea <- 
-  glm(data=morphology,
-      formula = est_surface_area ~ signifigant_taxa)
-report::report(mod_surfacearea)
-mod_surfacearea %>% summary
-sink("./output/cell_surface_area_glm_summary.txt")
-summary(mod_surfacearea)
-sink(NULL)
-
+bm %>% 
+  ggplot(aes(x=Abundance,y=p_ppm)) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  labs(x="Relative abundance",y="P (ppm)",title = "Bacillus megaterium") +
+  theme(plot.title = element_text(face='bold.italic',size=14,hjust=.5))
+ggsave("./output/figs/Bacillus_megaterium_P_solubilizer_vs_Pppm.png",height = 6,width = 6,dpi=300)
+glm(data=bm,
+    formula = p_ppm ~ Abundance) %>% broom::tidy() %>% 
+  write_csv("./output/figs/Bacillus_megaterium_P_solubilizer_vs_Pppm_glm.csv")
