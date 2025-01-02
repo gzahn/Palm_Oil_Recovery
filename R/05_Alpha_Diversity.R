@@ -33,6 +33,23 @@ theme_set(theme_bw() +
 fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
 bact <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS")
 
+
+
+# export melted tidy data sets
+fung1 <- fung
+taxa_names(fung1) <- paste0("ASV_",seq_along(taxa_names(fung1)))
+bact1 <- bact
+taxa_names(bact1) <- paste0("ASV_",seq_along(taxa_names(bact1)))
+fung_melt <- psmelt(fung1 %>% transform_sample_counts(ra))
+bact_melt <- psmelt(bact1 %>% transform_sample_counts(ra))
+write_csv(fung_melt,"./output/tidy_data_fungi.csv")
+write_csv(bact_melt,"./output/tidy_data_bacteria.csv")
+fung_gz <- gzfile("./output/tidy_data_fungi.csv.gz","w")
+writeLines(readLines("./output/tidy_data_fungi.csv"), fung_gz)
+bact_gz <- gzfile("./output/tidy_data_bacteria.csv.gz","w")
+writeLines(readLines("./output/tidy_data_bacteria.csv"), bact_gz)
+
+
 ## prep external metadata ####
 meta_fung <- fung@sam_data %>% as('data.frame')
 meta_bact <- bact@sam_data %>% as('data.frame')
