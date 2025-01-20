@@ -7,6 +7,9 @@ taxonomy/
 
 # Big files
 output/DADA*
+# download these phylogeny files from zenodo:
+phylogeny_info/2024.09.phylogeny.id.nwk.gz
+phylogeny_info/2024.09.taxonomy.id_w_order-column.tsv.gz
 
 # History files
 .Rhistory

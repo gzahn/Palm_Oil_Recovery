@@ -42,6 +42,8 @@ Taxonomy assigned against the following databases:
   - Bacteria -- [SILVA v 138.1](10.5281/zenodo.4587946)
   - Eukaryotes -- [Eukaryome v 1.9](https://eukaryome.org/)
 
+Phylogenetic data for tree building is found at: DOI:10.5281/zenodo.14708616
+
 ___
 
 
