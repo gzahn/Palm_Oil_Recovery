@@ -16,6 +16,18 @@ library(FAVA)
 ## functions ####
 source("./R/functions.R")
 
+## plot theme ####
+theme_set(theme_bw() +
+            theme(axis.title = element_text(face='bold',size=18),
+                  axis.text = element_text(face='bold',size=14),
+                  legend.title = element_text(face='bold',size=18),
+                  legend.text = element_text(face='bold',size=14),
+                  strip.text = element_text(face='bold',size=18),
+                  plot.title = element_text(face='bold',size=18),
+                  strip.background = element_rect(fill = 'white'))
+)
+
+
 ## load physeq objects ####
 fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
 # import bacterial data glommed to species (not ASV level)
@@ -124,7 +136,7 @@ bact_fava_bs$P_values
 
 # EXPORT RESULTS AND FIGS ####
 
-# FAVA stats tables
+# FAVA stats tables from bootstrap
 fung_fava_bs$observed_difference %>% 
   mutate(Comparison = Comparison %>% str_replace("\n"," ")) %>% 
   full_join(fung_fava_bs$P_values) %>% 
@@ -134,7 +146,25 @@ bact_fava_bs$observed_difference %>%
   full_join(bact_fava_bs$P_values) %>% 
   write_csv("./output/fava_stats_bacteria.csv")
 
+# FAVA values (weighted)
+fava_values <- 
+  fung_fava_w %>% 
+  mutate(amplicon = "Fungi") %>% 
+  full_join(bact_fava_w %>% 
+              mutate(amplicon = "Bacteria"))
+write_csv(fava_values,"./output/fava_values_both_domains.csv")
+
 # plots
+fava_values %>% 
+  ggplot(aes(x=treatment,y=FAVA,color=amplicon)) +
+  geom_point(size=4) +
+  geom_path(aes(group=amplicon)) +
+  # theme_bw() +
+  scale_color_manual(values = pal$pal.earthtones) +
+  facet_wrap(~amplicon,scales = 'free') +
+  labs(color="Domain",y="FAVA value",x="Treatment")
+ggsave("./output/figs/fava_values.png",dpi=400,height = 8, width = 12)
+
 ggsave(plot = fung_fava_bs$bootstrap_distribution_plot,
        filename = "./output/figs/fava_bootstrap_plot_fungi.png",
        dpi=400,
