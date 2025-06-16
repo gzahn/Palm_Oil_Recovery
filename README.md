@@ -23,11 +23,9 @@ Using Plot (P3) three as an example, it was palm oil originally, was cleared, an
 
   - Palm oil production
   - Area cleared and left fallow for a year
-  - Then they plant X (will find our exactly what) in year 1
-  - Then Y in year 2
-  - And Z in year 3
+  - Then they plant crops
 
-All started off as palm oil, then spent a year clear and left alone before planting X, Y then Z 
+All started off as palm oil, then spent a year clear and left alone before planting
 
 ___
 
@@ -35,7 +33,7 @@ ___
 
 Raw data is on the SRA: [PRJNA1117193](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1117193)
 
-The data is full length 16S and both regions of fungal ITS
+The data is full length 16S and fungal ITS1-5.8S-ITS2
 
 Taxonomy assigned against the following databases:
 
@@ -45,30 +43,5 @@ Taxonomy assigned against the following databases:
 Phylogenetic data for tree building is found at: DOI:10.5281/zenodo.14708616
 
 ___
-
-
-**Starting hypotheses:**
-
-  - 1. Microbial diversity increases with rewilding age and we see corresponding shifts in community structure that influences the chemical properties of the soil. Or something along those lines.
-  - 2. Network complexity in bacteria and fungi increases with time
-
-
-**Initial analyses:**
-
-  - 1, Standard Plots of diversity for bacteria and fungi
-  - 2, NMDS plots Bacteria and fungi – I would be surprised if they do not cluster by plot.
-  - 3, CornCob and all the other methods we use, differential abundance for bacteria and fungi – what is driving
-  - 4, Hopefully with these longer read length we can assign some functions to those that are differentially abundant and these functions relate to the measured pH, C, N etc.
-  - 5, Heatmaps of top 20 taxa for both, maybe we can resolve to genus or even species now?!!
-  - 6, Co-occurrence networks, maybe even a bit of complexity work – I suspect the palm oil is the least complex, whereas the plot that has been managed for three years is the most complex
-  - 7, Keystone species in the networks like in this paper (fig 3, https://doi.org/10.1007/s00248-024-02372-5)
-  - 8, Does soil chemical property influence community structure?
-  - 9, We might be able to get at community assembly a bit like fig 2 in https://doi.org/10.1007/s00248-024-02372-5, instead of tree species we use plot
-  - 10, anything else you want to try? Any ideas from the restoration work you’ve done in the US etc?
-
- 
-Convert "assembly over time taxa plots" to phylogeny: 4 trees, left to right; highlight branches that appear in that year or previous years; expanding tree of diversity!
- 
- 
  
  
