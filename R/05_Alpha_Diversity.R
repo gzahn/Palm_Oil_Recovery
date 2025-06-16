@@ -33,6 +33,12 @@ theme_set(theme_bw() +
 fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
 bact <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS")
 
+# read_counts
+x <- read_csv("./output/track_reads.csv")
+x %>% 
+  pivot_longer(ends_with("reads"),names_to = "time",values_to = "count") %>% 
+  group_by(amplicon,time) %>% 
+  summarize(med_count = mean(count,na.rm=TRUE))
 
 
 # export melted tidy data sets
@@ -317,30 +323,39 @@ scaled_meta <-
 fung_asv_rich_mod <- 
   lmerTest::lmer(data=scaled_meta,
                  formula=fungal_asv_richness ~ pH + c_perc_ww + h_perc_ww + n_perc_ww + p_ppm + (1|plot))
+rsq::rsq(fung_asv_rich_mod)
 lmerTest:::get_coefmat(fung_asv_rich_mod) %>% 
   as.data.frame() %>% 
+  mutate(coef = row.names(.)) %>% 
   write_csv("./output/fungal_asv_richness_vs_soil_lmer-mod.csv")
+rsq::rsq(fung_asv_rich_mod)
+
 # bacterial ASV richness
 bact_asv_rich_mod <- 
   lmerTest::lmer(data=scaled_meta,
                  formula=bacterial_asv_richness ~ pH + c_perc_ww + h_perc_ww + n_perc_ww + p_ppm + (1|plot))
 lmerTest:::get_coefmat(bact_asv_rich_mod) %>% 
   as.data.frame() %>% 
+  mutate(coef = row.names(.)) %>% 
   write_csv("./output/bacterial_asv_richness_vs_soil_lmer-mod.csv")
-
+rsq::rsq(bact_asv_rich_mod)
 # fungal spp richness
 fung_spp_rich_mod <- 
   lmerTest::lmer(data=scaled_meta,
                  formula=fungal_spp_richness ~ pH + c_perc_ww + h_perc_ww + n_perc_ww + p_ppm + (1|plot))
+rsq::rsq(fung_spp_rich_mod)
 lmerTest:::get_coefmat(fung_spp_rich_mod) %>% 
   as.data.frame() %>% 
+  mutate(coef = row.names(.)) %>% 
   write_csv("./output/fungal_spp_richness_vs_soil_lmer-mod.csv")
 # bacterial spp richness
 bact_spp_rich_mod <- 
   lmerTest::lmer(data=scaled_meta,
                  formula=bacterial_spp_richness ~ pH + c_perc_ww + h_perc_ww + n_perc_ww + p_ppm + (1|plot))
+rsq::rsq(bact_spp_rich_mod)
 lmerTest:::get_coefmat(bact_spp_rich_mod) %>% 
   as.data.frame() %>% 
+  mutate(coef = row.names(.)) %>% 
   write_csv("./output/bacterial_spp_richness_vs_soil_lmer-mod.csv")
 
 ### plots ####

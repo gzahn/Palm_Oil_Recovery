@@ -20,11 +20,40 @@ cd -
 Rscript ./R/00_Download_Seq_Data_From_SRA.R
 
 # QC of raw sequences
-Rscript ./R/01_Trim_Adaptors.R
+Rscript ./R/01_Trim_Adaptors_and_Filter.R
 
-# Build phyloseq objects
+# build phyloseq objects
 # incl ASV tables, metadata, taxonomic assignments, phytree for 16S
-Rscript 02_Build_Physeq_Objects.R
+Rscript ./R/02_Build_Physeq_Objects.R
 
+# clean up, remove non-target taxa, etc.
+Rscript ./R/03_Clean_Physeq_Objects.R
+
+# build phylogenies for 16S and full-length ITS
+Rscript ./R/04_Build_Phylogenies.R
+
+# alpha-diversity analyses
+Rscript ./R/05_Alpha_Diversity.R
+
+# beta-diversity analyses, GDM, etc.
+Rscript ./R/05_Beta_Diversity.R
+
+# build co-ocurrence networks 
+Rscript ./R/06_Network_Analyses.R
+
+# find "important" taxa; corncob, random forest, hub taxa
+Rscript ./R/07_Important_Taxa.R
+
+# investigate community assembly trends
+Rscript ./R/08_Community_Assembly.R
+
+# look at traits of taxa
+Rscript ./R/09_Taxa_Traits.R
+
+# build figs of phylogeny over time
+Rscript ./R/10_Phylogenetic_Heatmap_figures.R
+
+# conduct FAVA analysis of community compositional variability
+Rscript ./R/11_FAVA_Analysis.R
 
 

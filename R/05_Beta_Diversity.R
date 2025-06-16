@@ -30,6 +30,7 @@ theme_set(theme_bw() +
                   plot.title = element_text(face='bold',size=18))
 )
 
+
 ## load physeq objects ####
 fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
 bact <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS")
@@ -71,6 +72,16 @@ adonis2(otu_table(fung) ~ fung@sam_data$treatment) %>%
       mutate(term=term %>% str_remove('bact@sam_data\\$'),domain="Bacteria")
   ) %>% 
   write_csv("./output/permanova_table_treatment.csv")
+
+adonis2(otu_table(tax_glom(fung, taxrank = "Species")) ~ fung@sam_data$treatment) %>% 
+  tidy() %>% 
+  mutate(term=term %>% str_remove('fung@sam_data\\$'),domain="Fungi") %>% 
+  full_join(
+    adonis2(otu_table(tax_glom(bact, taxrank = "Species")) ~ bact@sam_data$treatment) %>% 
+      tidy() %>% 
+      mutate(term=term %>% str_remove('bact@sam_data\\$'),domain="Bacteria")
+  ) %>% 
+  write_csv("./output/permanova_table_treatment_spp-level.csv")
 
 # BETA-DISPERSION ####
 
@@ -142,7 +153,7 @@ sppTab_bact <- bact_ra_melt %>% dplyr::select(OTU,Sample,longitude,latitude,trea
 envTab_fung <- fung_ra_melt %>% dplyr::select(Sample,longitude,latitude,pH,ends_with("perc_ww"),ends_with("_ppm"))
 envTab_bact <- bact_ra_melt %>% dplyr::select(Sample,longitude,latitude,pH,ends_with("perc_ww"),ends_with("_ppm"))
 # format for gdm
-gdmTab_fung <- formatsitepair(bioData=sppTab_fung, 
+gdmTab_fung <- formatsitepair(bioData=sppTab_fung, weightType = 'richness',
                              bioFormat=2, #x-y spp list
                              XColumn="longitude", 
                              YColumn="latitude",
@@ -151,7 +162,7 @@ gdmTab_fung <- formatsitepair(bioData=sppTab_fung,
                              predData=envTab_fung,
                              abundance = TRUE,
                              abundColumn = "Abundance")
-gdmTab_bact <- formatsitepair(bioData=sppTab_bact, 
+gdmTab_bact <- formatsitepair(bioData=sppTab_bact, weightType = 'richness',
                               bioFormat=2, #x-y spp list
                               XColumn="longitude", 
                               YColumn="latitude",

@@ -9,7 +9,7 @@ library(janitor)
 library(patchwork)
 library(broom)
 library(vegan)
-library(corncob)
+library(corncob);packageVersion('corncob')
 library(ShortRead)
 library(vip)
 library(ranger)
@@ -31,8 +31,9 @@ set.seed(666)
 
 
 ## load physeq objects ####
-fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS")
-bact <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS")
+fung <- readRDS("./output/ITS_Physeq_cleaned_w_tree.RDS") %>% tax_glom("Species")
+bact <- readRDS("./output/16S_Physeq_cleaned_w_tree.RDS") %>% tax_glom("Species")
+
 # add refseqs so we can rename the taxa
 fung@refseq <- taxa_names(fung) %>% DNAStringSet()
 bact@refseq <- taxa_names(bact) %>% DNAStringSet()
@@ -171,11 +172,45 @@ saveRDS(fung_sig_melt,"./output/fungi_significant_taxa.RDS")
 saveRDS(bact_sig_melt,"./output/bacteria_significant_taxa.RDS")
 
 
-# PLOTS ####
-bacteria_top_taxa
-fung_sig_melt
-bact_sig_melt$OTU %>% unique %>% length
+names(bact_greater)
+bact_sig_melt$OTU %in% names(bact_greater)
+bact_sig_melt %>% 
+  group_by(treatment,taxonomy) %>% 
+  summarize(relabund = mean(Abundance,na.rm=TRUE))
 
+  
+
+
+
+# PLOTS ####
+
+## Plot important taxa relative abundances by timepoint ####
+p_fung_imp_taxa <- 
+fung %>% 
+  merge_samples("treatment",fun = 'sum') %>% 
+  transform_sample_counts(ra) %>% 
+  subset_taxa(taxa_names(fung) %in% unique(fung_sig_melt$OTU)) %>% 
+  psmelt() %>% 
+  mutate(Sample = factor(Sample,levels=levels(fung@sam_data$treatment))) %>% 
+  ggplot(aes(x=Sample,y=Abundance,fill=Class)) +
+  geom_col() +
+  scale_fill_viridis_d(option = 'turbo') + theme(plot.caption = element_text(face='bold',size=12)) +
+  labs(title="Fungi",y="Relative abundance",x="\nRewilding stage",caption = paste("N taxa = ",length(unique(fung_sig_melt$OTU))))
+
+p_bact_imp_taxa <- 
+bact %>% 
+  merge_samples("treatment",fun = 'sum') %>% 
+  transform_sample_counts(ra) %>% 
+  subset_taxa(taxa_names(bact) %in% unique(bact_sig_melt$OTU)) %>% 
+  psmelt() %>% 
+  mutate(Sample = factor(Sample,levels=levels(bact@sam_data$treatment))) %>% 
+  ggplot(aes(x=Sample,y=Abundance,fill=Class)) +
+  geom_col() +
+  scale_fill_viridis_d(option = 'turbo') + theme(plot.caption = element_text(face='bold',size=12)) +
+  labs(title="Bacteria",y="Relative abundance",x="",caption = paste("N taxa = ",length(unique(bact_sig_melt$OTU))," "))
+
+p_bact_imp_taxa / p_fung_imp_taxa
+ggsave("./output/figs/important_taxa_by_time.png",dpi=400,height = 9,width = 12)
 
 bact_sig_melt %>% 
   # dplyr::filter(treatment != "oil palm") %>% 
@@ -197,13 +232,13 @@ ggsave("./output/figs/important_fungal_taxa.png",height = 16, width = 16, dpi=40
 
 
 
-bact_sig_melt <- 
-  bact %>% 
-  transform_sample_counts(ra) %>% 
-  subset_taxa(taxa_names(bact) %in% bact_da_analysis$significant_taxa) %>% 
-  psmelt()
-
-
-
-fung_da_analysis$significant_taxa
-fung_da_analysis$significant_taxa %>% otu_to_taxonomy(data=fung)
+# bact_sig_melt <- 
+#   bact %>% 
+#   transform_sample_counts(ra) %>% 
+#   subset_taxa(taxa_names(bact) %in% bact_da_analysis$significant_taxa) %>% 
+#   psmelt()
+# 
+# 
+# 
+# fung_da_analysis$significant_taxa
+# fung_da_analysis$significant_taxa %>% otu_to_taxonomy(data=fung)

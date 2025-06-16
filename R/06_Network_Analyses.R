@@ -49,38 +49,83 @@ full <- merge_phyloseq(fung2,bact2)
 # BUILD NETWORKS ####
 # (all networks built on species-level consolidations of ASVs)
 
-# SpiecEasi parameters
-se.params <- list(rep.num=20, ncores=(parallel::detectCores()-1))
+# pushed this long process to separate script
+# source("./R/06_Build_Networks.R") # uncomment to re-run
 
-## Fungi ####
-se.mb.fung <- SpiecEasi::spiec.easi(data = fung,
-                                    method='mb',
-                                    sel.criterion = "bstars",
-                                    pulsar.params=se.params)
-saveRDS(se.mb.fung,"./output/Fungal_SpiecEasi_out.RDS")
+
+# load objects built by that script
 se.mb.fung <- readRDS("./output/Fungal_SpiecEasi_out.RDS")
-
-## Bacteria ####
-se.mb.bact <- SpiecEasi::spiec.easi(data = bact,
-                                    method='mb',
-                                    sel.criterion = "bstars",
-                                    pulsar.params=se.params)
-saveRDS(se.mb.fung,"./output/Bacterial_SpiecEasi_out.RDS")
-se.mb.fung <- readRDS("./output/Bacterial_SpiecEasi_out.RDS")
-
-## Both ####
-se.mb.full <- SpiecEasi::spiec.easi(data = full,
-                                    method='mb',
-                                    sel.criterion = "bstars",
-                                    pulsar.params=se.params)
-saveRDS(se.mb.full,"./output/Full_SpiecEasi_out.RDS")
+se.mb.bact <- readRDS("./output/Bacterial_SpiecEasi_out.RDS")
 se.mb.full <- readRDS("./output/Full_SpiecEasi_out.RDS")
 
+se.mb.fung_oil_palm <- readRDS("./output/Fungal_SpiecEasi_oil_palm.RDS")
+se.mb.fung_0_1yrs <- readRDS("./output/Fungal_SpiecEasi_0_1yrs.RDS")
+se.mb.fung_1_2yrs <- readRDS("./output/Fungal_SpiecEasi_1_2yrs.RDS")
+se.mb.fung_2_3yrs <- readRDS("./output/Fungal_SpiecEasi_2_3yrs.RDS")
+se.mb.fung_3_4yrs <- readRDS("./output/Fungal_SpiecEasi_3_4yrs.RDS")
 
-## build igraph ####
-fung_igraph <- adj2igraph(getRefit(se.mb.fung),vertex.attr = list(name=taxa_names(fung)))
-bact_igraph <- adj2igraph(getRefit(se.mb.bact),vertex.attr = list(name=taxa_names(bact)))
-full_igraph <- adj2igraph(getRefit(se.mb.full),vertex.attr = list(name=taxa_names(full)))
+se.mb.bact_oil_palm <- readRDS("./output/Bacterial_SpiecEasi_oil_palm.RDS")
+se.mb.bact_0_1yrs <- readRDS("./output/Bacterial_SpiecEasi_0_1yrs.RDS")
+se.mb.bact_1_2yrs <- readRDS("./output/Bacterial_SpiecEasi_1_2yrs.RDS")
+se.mb.bact_2_3yrs <- readRDS("./output/Bacterial_SpiecEasi_2_3yrs.RDS")
+se.mb.bact_3_4yrs <- readRDS("./output/Bacterial_SpiecEasi_3_4yrs.RDS")
+
+se.mb.full_oil_palm <- readRDS("./output/Full_SpiecEasi_oil_palm.RDS")
+se.mb.full_0_1yrs <- readRDS("./output/Full_SpiecEasi_0_1yrs.RDS")
+se.mb.full_1_2yrs <- readRDS("./output/Full_SpiecEasi_1_2yrs.RDS")
+se.mb.full_2_3yrs <- readRDS("./output/Full_SpiecEasi_2_3yrs.RDS")
+se.mb.full_3_4yrs <- readRDS("./output/Full_SpiecEasi_3_4yrs.RDS")
+
+# Read global igraphs
+fung_igraph <- readRDS("./output/fungal_igraph_full.RDS")
+bact_igraph <- readRDS("./output/bacterial_igraph_full.RDS")
+full_igraph <- readRDS("./output/combined_igraph_full.RDS")
+
+# Read treatment-level fungal igraphs
+fung_igraph_oilpalm <- readRDS("./output/fungal_igraph_oil_palm.RDS")
+fung_igraph_01 <- readRDS("./output/fungal_igraph_0_1yrs.RDS")
+fung_igraph_12 <- readRDS("./output/fungal_igraph_1_2yrs.RDS")
+fung_igraph_23 <- readRDS("./output/fungal_igraph_2_3yrs.RDS")
+fung_igraph_34 <- readRDS("./output/fungal_igraph_3_4yrs.RDS")
+
+# Read treatment-level bacterial igraphs
+bact_igraph_oilpalm <- readRDS("./output/bacterial_igraph_oil_palm.RDS")
+bact_igraph_01 <- readRDS("./output/bacterial_igraph_0_1yrs.RDS")
+bact_igraph_12 <- readRDS("./output/bacterial_igraph_1_2yrs.RDS")
+bact_igraph_23 <- readRDS("./output/bacterial_igraph_2_3yrs.RDS")
+bact_igraph_34 <- readRDS("./output/bacterial_igraph_3_4yrs.RDS")
+
+# Read treatment-level combined igraphs
+full_igraph_oilpalm <- readRDS("./output/combined_igraph_oil_palm.RDS")
+full_igraph_01 <- readRDS("./output/combined_igraph_0_1yrs.RDS")
+full_igraph_12 <- readRDS("./output/combined_igraph_1_2yrs.RDS")
+full_igraph_23 <- readRDS("./output/combined_igraph_2_3yrs.RDS")
+full_igraph_34 <- readRDS("./output/combined_igraph_3_4yrs.RDS")
+
+# Read fungal phyloseq objects
+fung_oil_palm <- readRDS("./output/fungal_phyloseq_oil_palm.RDS")
+fung_0_1yrs   <- readRDS("./output/fungal_phyloseq_0_1yrs.RDS")
+fung_1_2yrs   <- readRDS("./output/fungal_phyloseq_1_2yrs.RDS")
+fung_2_3yrs   <- readRDS("./output/fungal_phyloseq_2_3yrs.RDS")
+fung_3_4yrs   <- readRDS("./output/fungal_phyloseq_3_4yrs.RDS")
+
+# Read bacterial phyloseq objects
+bact_oil_palm <- readRDS("./output/bacterial_phyloseq_oil_palm.RDS")
+bact_0_1yrs   <- readRDS("./output/bacterial_phyloseq_0_1yrs.RDS")
+bact_1_2yrs   <- readRDS("./output/bacterial_phyloseq_1_2yrs.RDS")
+bact_2_3yrs   <- readRDS("./output/bacterial_phyloseq_2_3yrs.RDS")
+bact_3_4yrs   <- readRDS("./output/bacterial_phyloseq_3_4yrs.RDS")
+
+# Read combined (fungi + bacteria) phyloseq objects
+full_oil_palm <- readRDS("./output/combined_phyloseq_oil_palm.RDS")
+full_0_1yrs   <- readRDS("./output/combined_phyloseq_0_1yrs.RDS")
+full_1_2yrs   <- readRDS("./output/combined_phyloseq_1_2yrs.RDS")
+full_2_3yrs   <- readRDS("./output/combined_phyloseq_2_3yrs.RDS")
+full_3_4yrs   <- readRDS("./output/combined_phyloseq_3_4yrs.RDS")
+
+
+
+
 
 
 # FIND HUB TAXA ####
@@ -148,6 +193,62 @@ for(i in (full@sam_data$sample_id)){
   full_netstats[[i]] <- stat_list
 }
 
+
+# subgraphs for each treatment-domain combo:
+# Define domains and corresponding phyloseq and igraph objects
+domains <- list(
+  fungi = list(
+    oil_palm = list(ps = fung_oil_palm, ig = fung_igraph_oilpalm),
+    `0-1yrs`  = list(ps = fung_0_1yrs,   ig = fung_igraph_01),
+    `1-2yrs`  = list(ps = fung_1_2yrs,   ig = fung_igraph_12),
+    `2-3yrs`  = list(ps = fung_2_3yrs,   ig = fung_igraph_23),
+    `3-4yrs`  = list(ps = fung_3_4yrs,   ig = fung_igraph_34)
+  ),
+  bacteria = list(
+    oil_palm = list(ps = bact_oil_palm, ig = bact_igraph_oilpalm),
+    `0-1yrs`  = list(ps = bact_0_1yrs,   ig = bact_igraph_01),
+    `1-2yrs`  = list(ps = bact_1_2yrs,   ig = bact_igraph_12),
+    `2-3yrs`  = list(ps = bact_2_3yrs,   ig = bact_igraph_23),
+    `3-4yrs`  = list(ps = bact_3_4yrs,   ig = bact_igraph_34)
+  ),
+  combined = list(
+    oil_palm = list(ps = full_oil_palm, ig = full_igraph_oilpalm),
+    `0-1yrs`  = list(ps = full_0_1yrs,   ig = full_igraph_01),
+    `1-2yrs`  = list(ps = full_1_2yrs,   ig = full_igraph_12),
+    `2-3yrs`  = list(ps = full_2_3yrs,   ig = full_igraph_23),
+    `3-4yrs`  = list(ps = full_3_4yrs,   ig = full_igraph_34)
+  )
+)
+
+# Initialize empty nested list for results
+netstats <- list()
+
+# Loop through all domains and treatments
+for (domain in names(domains)) {
+  netstats[[domain]] <- list()
+  
+  for (trt in names(domains[[domain]])) {
+    ps_obj <- domains[[domain]][[trt]]$ps
+    ig_obj <- domains[[domain]][[trt]]$ig
+    
+    stat_list <- list()
+    
+    for (sample_id in sample_names(ps_obj)) {
+      ss <- subset_samples(ps_obj, sample_id == sample_id)
+      ss <- subset_taxa(ss, taxa_sums(ss) > 0)
+      stat_list[[sample_id]] <- find_ig_subset_attr(ps.subset = ss, ig.full = ig_obj)
+    }
+    
+    netstats[[domain]][[trt]] <- stat_list
+  }
+}
+
+netstats$fungi$oil_palm
+
+
+
+
+
 ## export network statistics ####
 saveRDS(fungi_netstats,"./output/fungi_network_stats_list.RDS")
 saveRDS(bacteria_netstats,"./output/bacterial_network_stats_list.RDS")
@@ -163,6 +264,8 @@ complete_netstats <-
 # nested list...access as follows:
 complete_netstats$fungi$P1.1$n_vertices
 
+fung_igraph %>% plot
+plot_hubs(bact_igraph)
 ## Extract attributes ####
 
 ### Degree Distributions ####
@@ -467,9 +570,120 @@ graph_atributes_df <-
   graph_atributes_df %>% 
   mutate(across(where(is.list),unlist))
   
+
+graph_atributes_df$
+
 ## Export attributes ####
 graph_atributes_df %>% 
   saveRDS("./output/complete_network_attributes.RDS")
+
+# FOR treatment-by-domain networks:
+# Initialize a list to gather rows
+compiled_stats <- list()
+
+# Loop through domains and treatments
+for (domain in names(netstats)) {
+  for (treatment in names(netstats[[domain]])) {
+    for (sample_id in names(netstats[[domain]][[treatment]])) {
+      stat <- netstats[[domain]][[treatment]][[sample_id]]
+      
+      compiled_stats[[length(compiled_stats) + 1]] <- tibble(
+        taxa = str_to_title(domain),
+        treatment = treatment,
+        sample_id = sample_id,
+        clique_num = stat$clique_num,
+        clustering_coeficent = stat$clustering_coeficient,
+        deg_distribution = list(stat$deg_dist),
+        global_effic = stat$global_effic,
+        max_degree = stat$max_degree,
+        mean_betweenness = stat$mean_betweenness,
+        mean_closeness = stat$mean_closeness,
+        mean_coreness = stat$mean_coreness,
+        mean_dist = stat$mean_dist,
+        n_vertices = stat$n_vertices
+      )
+    }
+  }
+}
+
+# Combine into a data frame
+graph_attributes_df2 <- bind_rows(compiled_stats)
+
+# Prepare degree distribution for separate plotting
+deg_dist_df <- 
+  graph_attributes_df2 %>%
+  select(taxa, treatment, sample_id, deg_distribution) %>%
+  unnest_longer(deg_distribution, values_to = "value") %>%
+  filter(!is.na(value))
+
+# Join back to the main data (without deg_distribution as list-col)
+graph_attributes_df2 <- 
+  graph_attributes_df2 %>% 
+  select(-deg_distribution) %>%
+  left_join(deg_dist_df, by = c("taxa", "treatment", "sample_id")) %>%
+  rename(deg_distribution = value)
+
+# Save
+saveRDS(graph_attributes_df2, "./output/complete_network_attributes_domain-by-trt.RDS")
+
+
+
+
+
+## Plot network examples ####
+comm_list <- list()
+for(i in (levels(fung@sam_data$treatment))){
+  # build subset on the fly
+  ss <- fung %>% subset_samples(treatment == i)
+  ss <- ss %>% subset_taxa(taxa_sums(ss) > 0)
+  present_vertices <- which(taxa_sums(ss) > 0)
+  ig.subset <- igraph::subgraph(graph = fung_igraph,vids = present_vertices)
+  comm <- igraph::cluster_walktrap(ig.subset)
+  comm_list[[i]] <- comm
+  cat(i); cat(igraph::mean_distance(ig.subset))
+}
+
+# find main keystone taxon in each sample
+sample_hubs_list <- list()
+for(i in (fung@sam_data$sample_id)){
+  # build subset on the fly
+  ss <- fung %>% subset_samples(sample_id == i)
+  ss <- ss %>% subset_taxa(taxa_sums(ss) > 0)
+  present_vertices <- which(taxa_sums(ss) > 0)
+  ig.subset <- igraph::subgraph(graph = fung_igraph,vids = present_vertices)
+  sample_hubs <- hubfindr::find_hubs(ig.subset,ss,cutoff = '1sd')
+  sample_hubs_list[[paste(ss@sam_data$treatment,i,sep="_")]] <- sample_hubs
+}
+
+keystones <- sample_hubs_list %>% map(3) %>% map(1) %>% unlist
+keystone_df <- data.frame(sample = names(keystones),
+                          asv = unname(keystones)) %>% 
+  tidyr::separate(sample, into = c("treatment","sample_id"),sep = "_")
+
+keystone_df$taxonomy <- corncob::otu_to_taxonomy(keystone_df$asv, fung)
+
+keystone_df %>% 
+  dplyr::select(treatment,taxonomy) %>% 
+  group_by(treatment) %>% 
+  reframe(tax = unique(taxonomy))
+
+table(keystone_df$treatment,keystone_df$taxonomy) %>% 
+  as.data.frame() %>% 
+  dplyr::filter(Freq > 1) %>% 
+  arrange(Var1,desc(Freq))
+# how many clusters?
+comm_list %>% 
+  map(igraph::communities) %>% 
+  map(length) %>% unlist
+# build subgraph from present taxa only
+
+
+graph_attributes_df2 %>% 
+  mutate(treatment=factor(treatment,levels=graph_attributes_df2$treatment %>% unique)) %>% 
+  ggplot(aes(x=treatment,y=clustering_coeficent)) +
+  geom_boxplot() +
+  facet_wrap(~taxa)
+
 
 # PLOT NETWORK ATTRIBUTES ####
 
@@ -517,6 +731,25 @@ graph_atributes_df %>%
   mutate(treatment = factor(treatment,levels=levels(fung@sam_data$treatment)),
          taxa=factor(taxa,levels=c("Bacteria","Fungi","Both"))) %>% 
   rename("sample_id" = "sampleID") # change name back
+
+
+# glm ####
+network_df <- 
+  graph_atributes_df %>%
+  rename("sampleID"="sample_id") %>% # rename temporarily for easier pivot
+  dplyr::select(-deg_distribution) %>% 
+  pivot_longer(contains("_"),names_to = "network_attribute") %>%
+  full_join(richness) %>% 
+  unique.data.frame() %>% 
+  pivot_wider(names_from = network_attribute,
+              values_from = value) %>% 
+  mutate(treatment = factor(treatment,
+                            levels = c("oil palm","0-1 years","1-2 years","2-3 years","3-4 years"),
+                            ordered=TRUE))
+network_df %>% 
+  glm(data=.,
+      formula=clustering_coeficent ~ taxa * treatment) %>% 
+  summary
 
 p1 <-   
 richness_vs_atributes_df %>% 
@@ -569,9 +802,9 @@ p4 <- richness_vs_atributes_df %>%
   ggplot(aes(x=treatment,y=value,fill=treatment)) +
   geom_boxplot() +
   facet_wrap(~network_attribute,scales = 'free',nrow = 1) +
-  labs(fill="Treatment",x="",y="",title="Bacteria") +
-  theme(axis.text.x = element_text(angle=90,hjust=1,vjust=.5,size=10),
-        strip.text = element_text(size=8),
+  labs(fill="Rewilding\nprogress",x="",y="",title="Bacteria") +
+  theme(axis.text.x = element_blank(), axis.text.y = element_text(face='bold',size=10),
+        strip.text = element_text(size=8),legend.position = "bottom",
         plot.title = element_text(hjust=.5)) +
   scale_fill_manual(values = trt.pal)
 p5 <- richness_vs_atributes_df %>% 
@@ -579,9 +812,9 @@ p5 <- richness_vs_atributes_df %>%
   ggplot(aes(x=treatment,y=value,fill=treatment)) +
   geom_boxplot() +
   facet_wrap(~network_attribute,scales = 'free',nrow = 1) +
-  labs(fill="Treatment",x="",y="",title="Fungi") +
-  theme(axis.text.x = element_text(angle=90,hjust=1,vjust=.5,size=10),
-        strip.text = element_text(size=8),
+  labs(fill="Rewilding\nprogress",x="",y="",title="Fungi") +
+  theme(axis.text.x = element_blank(), axis.text.y = element_text(face='bold',size=10),
+        strip.text = element_text(size=8),legend.position = "bottom",
         plot.title = element_text(hjust=.5)) +
   scale_fill_manual(values = trt.pal)
 p6 <- richness_vs_atributes_df %>% 
@@ -589,14 +822,14 @@ p6 <- richness_vs_atributes_df %>%
   ggplot(aes(x=treatment,y=value,fill=treatment)) +
   geom_boxplot() +
   facet_wrap(~network_attribute,scales = 'free',nrow = 1) +
-  labs(fill="Treatment",x="",y="",title="Both") +
-  theme(axis.text.x = element_text(angle=90,hjust=1,vjust=.5,size=10),
-        strip.text = element_text(size=8),
+  labs(fill="Rewilding\nprogress",x="",y="",title="Both") +
+  theme(axis.text.x = element_blank(), axis.text.y = element_text(face='bold',size=10),
+        strip.text = element_text(size=8),legend.position = "bottom",
         plot.title = element_text(hjust=.5)) +
   scale_fill_manual(values = trt.pal)
 
 # combine plots
-p4 / p5 / p6 + patchwork::plot_layout(guides = 'collect')
+p4 / p5 / p6 + patchwork::plot_layout(guides = 'collect') & theme(legend.position = "bottom") & plot_annotation(tag_levels = 'A')
 
 ### export plot ####
 ggsave("./output/figs/Treatment_v_Network_attributes.png",dpi=400,height = 8,width = 16)
@@ -616,6 +849,30 @@ richness_vs_atributes_df %>%
          Observed=as.numeric(Observed))
 # export re-scaled data
 saveRDS(scaled_richness_vs_atributes_df,"./output/richness_v_scaled_network_attributes_df.RDS")
+
+
+# ANOVA of each network property over time
+modlist <- list()
+for(i in scaled_richness_vs_atributes_df$taxa %>% levels){
+  dat <- scaled_richness_vs_atributes_df %>% dplyr::filter(taxa == i)
+  for(j in dat$network_attribute %>% unique){
+    x <- dat %>% dplyr::filter(network_attribute == j)
+    mod <- aov(data=x,formula = value ~ treatment)
+    mod_df <- broom::tidy(mod) %>% 
+      mutate(taxa = i,attribute = j)
+    modlist[[paste(i,"_",j)]] <- mod_df
+    # cat(i);cat("   ");cat(j);cat("\n")
+    # print(summary(mod))
+  }
+}
+modlist %>% 
+  purrr::reduce(full_join) %>% 
+  mutate(
+    across(where(is.numeric),function(x){round(x,3)})
+  ) %>% 
+  write_csv("./output/Treatment_v_Network_attributes_AOV_outputs.csv")
+
+
 
 ## richness ####
 network_mod_fung <- 
