@@ -1,6 +1,12 @@
 # Palm_Oil_Recovery
 
 
+This repository is archived at Zenodo:
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15677641.svg)](https://doi.org/10.5281/zenodo.15677641)
+
+
+
 
 ## Study info:
 
