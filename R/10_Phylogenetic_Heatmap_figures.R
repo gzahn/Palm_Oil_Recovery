@@ -120,7 +120,7 @@ while(length(cleaned_tree.bact$tip.label)>length(unique(cleaned_tree.bact$tip.la
 print(i)
  }
  }
-
+saveRDS(cleaned_tree.bact,"./phylogeny_info/cleaned_tree_bact.RDS")
 #you can also use the below until you find a tip number you want.  It runs
 #six times
 # for(i in 1:length(duplicated_names)){
@@ -146,10 +146,11 @@ filtered_bact <- bact %>% filter(Order %in% ult.tree.bact$tip.label)
 NASV.bact <- filtered_bact %>% select(Order, time, N_ASVs)
 #make year a factor and fix its labels
 NASV.bact$time<-as.factor(NASV.bact$time)
-levels(NASV.bact$time)<-c("Year 0", "Year 1", "Year 2", "Year 3", "Year 4")
+levels(NASV.bact$time)<-c("Oil palm", "0-1 Years", "1-2 Years", "2-3 Years", "3-4 Years")
 #fix the formating
 bact.abundance_data <- NASV.bact %>%
   pivot_wider(names_from = time, values_from = N_ASVs)
+
 #this makes it so we can have it as a matrix for phytools
 bact.abundance_data<-as.data.frame(bact.abundance_data)
 rownames(bact.abundance_data) <- bact.abundance_data$Order
@@ -159,7 +160,7 @@ bact.abundance_data <- bact.abundance_data[, -1]
 rel.bac <- filtered_bact %>% select(Order, time, relative_abundance)
 #make year a function and fix its labels
 rel.bac$time<-as.factor(rel.bac$time)
-levels(rel.bac$time)<-c("Year 0", "Year 1", "Year 2", "Year 3", "Year 4")
+levels(rel.bac$time)<-c("Oil palm", "0-1 Years", "1-2 Years", "2-3 Years", "3-4 Years")
 #fix the formating
 rel_abundance_data.bact <- rel.bac %>%
   pivot_wider(names_from = time, values_from = relative_abundance)
@@ -178,15 +179,16 @@ p <- ggtree(ult.tree.bact) +
   theme(plot.margin = margin(t = 8, r = 0.2, b = 15, l = 1)) 
 #first heatmap of number of unique ASVs
 p1 <- gheatmap(p, abund.mat.bact, offset=.4, width=.3,
-               colnames_angle=75, colnames_offset_y =-3.5,
+               colnames_angle=60, colnames_offset_y =-3,colnames_offset_x = -.03,
                color="black") +
   scale_fill_viridis_c(option="D", direction=-1,
                        end=0.9,name="# Unique\nASVs",
                        na.value = "white")
 p2 <- p1 + new_scale_fill()
 #second heatmap
-gheatmap(p2, rel.abund.mat.bact, offset=0.75, width=.3,
-         colnames_angle=75, colnames_offset_y = -3.5,
+bact_final_plot <- 
+  gheatmap(p2, rel.abund.mat.bact, offset=0.75, width=.3,
+         colnames_angle=60, colnames_offset_y = -3,colnames_offset_x = -.03,
          colnames_position = "bottom",
          color="black") +
   scale_fill_viridis_c(option="A", direction=-1,
@@ -198,7 +200,8 @@ gheatmap(p2, rel.abund.mat.bact, offset=0.75, width=.3,
            color="black", hjust=0)+
   annotate(geom="text", x=1.78, y=100, label="Rel. Abund.",
            color="black", hjust=0)
-
+bact_final_plot
+ggsave("./output/figs/bact_tree_heatmap.png",dpi=400, height = 18,width = 10)
 
 #Fungus tree stuff####
 #if you're only working with this stuff, be sure to read in the function at the top of the script
@@ -292,7 +295,7 @@ filtered_fung <- fung.dat %>% filter(Order %in% fun.ult.tree$tip.label)
 NASV.fun <- filtered_fung %>% select(Order, time, N_ASVs)
 #make year a factor and fix its labels
 NASV.fun$time<-as.factor(NASV.fun$time)
-levels(NASV.fun$time)<-c("Year 0", "Year 1", "Year 2", "Year 3", "Year 4")
+levels(NASV.fun$time)<-c("Oil palm", "0-1 Years", "1-2 Years", "2-3 Years", "3-4 Years")
 #fix the formating
 fun.abundance_data <- NASV.fun %>%
   pivot_wider(names_from = time, values_from = N_ASVs)
@@ -305,7 +308,7 @@ fun.abundance_data <- fun.abundance_data[, -1]
 rel.fun <- filtered_fung %>% select(Order, time, relative_abundance)
 #make year a function and fix its labels
 rel.fun$time<-as.factor(rel.fun$time)
-levels(rel.fun$time)<-c("Year 0", "Year 1", "Year 2", "Year 3", "Year 4")
+levels(rel.fun$time)<-c("Oil palm", "0-1 Years", "1-2 Years", "2-3 Years", "3-4 Years")
 #fix the formating
 fun.rel_abundance_data <- rel.fun %>%
   pivot_wider(names_from = time, values_from = relative_abundance)
@@ -326,15 +329,16 @@ f.p <- ggtree(fun.ult.tree) +
   theme(plot.margin = margin(t = 25, r = 0.2, b = 50, l = 1)) 
 #makes the first heatmap for # of unique ASVs
 f.p1 <- gheatmap(f.p, fun.abund.mat, offset=.25, width=.3,
-               colnames_angle=75, colnames_offset_y =-1.5,
+               colnames_angle=60, colnames_offset_y =-3,colnames_offset_x = -.03,
                color="black") +
   scale_fill_viridis_c(option="D", direction=-1,
                        end=0.9,name="# Unique\nASVs",
                        na.value = "white")
 f.p2 <- f.p1 + new_scale_fill()
 #second heatmap
-gheatmap(f.p2, fun.rel.abund.mat, offset=0.6, width=.3,
-         colnames_angle=75, colnames_offset_y = -1.5,
+fung_final_plot <- 
+  gheatmap(f.p2, fun.rel.abund.mat, offset=0.6, width=.3,
+         colnames_angle=60, colnames_offset_y = -3,colnames_offset_x = -.03,
          colnames_position = "bottom",
          color="black") +
   scale_fill_viridis_c(option="A", direction=-1,
@@ -345,6 +349,9 @@ gheatmap(f.p2, fun.rel.abund.mat, offset=0.6, width=.3,
            color="black", hjust=0)+
   annotate(geom="text", x=1.63, y=37, label="Rel. Abund.",
            color="black", hjust=0)
+fung_final_plot
+ggsave("./output/figs/fung_tree_heatmap.png",dpi=400,height = 18,width = 10)
 
-
-
+library(patchwork)
+bact_final_plot | fung_final_plot
+ggsave("./output/figs/combined_phylogeny_heatmap.png",dpi=400,height = 18,width = 20)

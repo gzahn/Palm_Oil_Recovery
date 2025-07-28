@@ -13,7 +13,7 @@ library(corncob);packageVersion('corncob')
 library(ShortRead)
 library(vip)
 library(ranger)
-
+packageVersion("vip")
 ## functions ####
 source("./R/functions.R")
 

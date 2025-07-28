@@ -42,6 +42,8 @@ fung_ord <- fung %>%
 bact_ord <- bact %>% 
   transform_sample_counts(function(x){x/sum(x)}) %>%
   ordinate(method="NMDS",distance = "unifrac")
+fung_ord$stress
+bact_ord$stress
 
 bact_nmds <- plot_ordination(bact, bact_ord, color="treatment") + 
   geom_point(size=6,alpha=.8) +
@@ -194,14 +196,15 @@ bact_preds <- data.frame(observed = gdmTab_bact$distance,
 full_join(fung_preds,bact_preds) %>% 
   ggplot(aes(x=observed,y=predicted)) +
   geom_point() +
-  geom_smooth() +
+  geom_smooth(method='lm') +
   facet_wrap(~sample_type,scales = 'free')
-
+ggsave("./output/figs/gdm_obs_vs_predicted.png",width = 8,height = 6,dpi=300)
 full_join(fung_preds,bact_preds) %>% 
   ggplot(aes(x=dist,y=observed)) +
   geom_point() +
   geom_smooth() +
   facet_wrap(~sample_type,scales = 'free')
+ggsave("./output/figs/gdm_comm-dist_vs_observed.png",width = 8,height = 6,dpi=300)
 
 ## Extract splines ####
 fung_splines <- gdm::isplineExtract(gdm_fung) %>% as.data.frame() %>% mutate(Domain='Fungi')
@@ -227,7 +230,7 @@ p2 <- isplines %>%
   ggplot(aes(x=geographic_actual*10000,y=geographic_partial,color=Domain)) +
   geom_smooth(se=FALSE,linewidth=2) +
   scale_color_manual(values=pal$pal.earthtones) +
-  labs(y="f(Geographic distance)",x="Geographic distance (m)",color="Taxa")
+  labs(y="f(Geo. dist.)",x="Geographic distance (m)",color="Taxa")
 
 p3 <- isplines %>% 
   ggplot(aes(x=C_actual,y=C_partial,color=Domain)) +
